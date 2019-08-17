@@ -6,6 +6,11 @@ __pycache__/
 instance/
 
 credentials.json
+token.pickle
+
+.pytest_cache/
+.coverage
+htmlcov/
 
 dist/
 build/
