@@ -1,36 +1,20 @@
 DROP TABLE IF EXISTS Student;
-DROP TABLE IF EXISTS Class;
-DROP TABLE IF EXISTS Subject;
 DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Timetable;
 
-CREATE TABLE Class (
-	id INTEGER AUTO_INCREMENT,
-	name VARCHAR(5) NOT NULL, -- e.g. A, D, AE1, ICT2, PMAB2, AMSN3
-	PRIMARY KEY (id)
+CREATE TABLE Timetable (
+    id INTEGER AUTO_INCREMENT,
+    name VARCHAR(5) NOT NULL UNIQUE,
+    calendar_id VARCHAR(100) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE Student (
 	id INTEGER AUTO_INCREMENT,
-	username VARCHAR(32) NOT NULL,
-	password VARCHAR(32) NOT NULL,
-	school_id CHAR(6) NOT NULL,
-	class_id INTEGER,
+	username VARCHAR(32) UNIQUE NOT NULL,
+	password TEXT NOT NULL,
+	school_id CHAR(6),
+	timetable_id INTEGER NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (class_id) REFERENCES Class(id)
-);
-
-CREATE TABLE Subject (
-	id INTEGER AUTO_INCREMENT,
-	name TEXT(100),
-	subject_code TEXT(10),
-	PRIMARY KEY (id)
-);
-
-CREATE TABLE Event (
-	id INTEGER AUTO_INCREMENT,
-	summary TEXT(255) NOT NULL,
-	start_time DATETIME NOT NULL,
-	end_time DATETIME NOT NULL,
-	location TEXT(25),
-	PRIMARY KEY (id)
+	FOREIGN KEY (timetable_id) REFERENCES Timetable(id)
 );

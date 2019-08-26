@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from flask import jsonify
+import json
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -16,6 +16,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 DAY = datetime.timedelta(days=1)
 HOUR = datetime.timedelta(hours=1)
 MINUTE = datetime.timedelta(minutes=1)
+
 
 def authorize():
 	"""Authorize the app by either using token or making token from credentials.json file"""
@@ -40,8 +41,9 @@ def authorize():
 			pickle.dump(creds, token)
 	return creds
 
-def update_db(service, calendar_id='primary'):
-	"""Update the database by retrieving data from Google API and write it to the server's db
+
+def load_db(service, calendar_id='primary'):
+	""" This will load data from Google API, given calendar id
 	Parameters:
 	service:
 		The service variable that is built from credentials variable
@@ -50,49 +52,57 @@ def update_db(service, calendar_id='primary'):
 		The id of a calendar, must be updated manually
 	"""
 	now = datetime.datetime.utcnow()
-	last_week = now - 7 * DAY
-	next_week = now + 7 * DAY
+	begin = None
+	end = None
+	if now.day >= 8:
+		begin = datetime.datetime(year=now.year, month=8, day=15)
+		end = datetime.datetime(year=now.year+1, month=7, day=31)
 
-	last_week = last_week.isoformat() + 'Z' # 'Z' indicates UTC time
-	next_week = next_week.isoformat() + 'Z'
+	begin = begin.isoformat() + 'Z'  # 'Z' indicates UTC time
+	end = end.isoformat() + 'Z'
 
-	events_result = service.events().list(calendarId=calendar_id, timeMin=last_week,
-										timeMax=next_week, singleEvents=True,
-										orderBy='startTime').execute()
+	events_result = service.events().list(
+		calendarId=calendar_id, timeMin=begin,
+		timeMax=end, singleEvents=True,
+		orderBy='startTime').execute()
 
 	events = events_result.get('items', [])
 
-	print("Events from {} to {}\n".format(last_week, next_week))
+	print("Events from {} to {}\n".format(begin, end))
 
 	# This is for development stage. When DB is integrated, it should returns a message (?)
 	return events
 
-def print_event(events):
-	if not events:
-		print('No upcoming events found.')
-	for event in events:
-		start = event['start'].get('dateTime', event['start'].get('date'))
-		print(start, event['summary'])
 
-def main():
-	""" Update database and show events
-	Events updated from last week to next week
+def print_event(event):
+	"""" This function is used for cli testing only """
+	if event['start'].get('dateTime') is None:
+		return
+	start = event['start'].get('dateTime')
+	print(start, event['summary'])
+
+
+def get_event(calendar_id='ict2'):
+	""" This one use a calendar code and get that events
 	"""
 	creds = authorize()
 
 	service = build('calendar', 'v3', credentials=creds)
 
 	# Call the Calendar API
-	# events = update_db(service, 'fmapuhshmsgpbtu2ljlvvq3pps@group.calendar.google.com')
-	calendar_list = {}
-	with open('timetable/calendar_list.json') as f:
-		calendar_list = jsonify(f.read())
-		for calendar in calendar_list:
-			events = update_db(service, calendar_list[calendar])
-			print(calendar)
-			print_event(events)
+	with open('timetable/calendar_list.json', 'r') as f:
+		calendar_list = json.loads(f.read())
+		calendar = calendar_list[calendar_id]
+		events = load_db(service, calendar)
 
-	# print_event(events)
+		for event in events:
+			if event['start'].get('dateTime') is None:
+				continue
+			if 'location' in event:
+				event['summary'] += ' - {}'.format(event['location'])
+
+	return events
+
 
 if __name__ == '__main__':
-	main()
+	get_event()
