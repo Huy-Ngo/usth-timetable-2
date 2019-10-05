@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+	<h1>
+		{% block title %} Log In {% endblock %}
+	</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" class="container">
+	<label for="username">Username</label>
+	<input name="username" id="username" required>
+	<label for="password"> Password </label>
+	<input type="password" name="password" id="password" required>
+	<input type="submit" class="waves-effect waves-light btn indigo accent-3" style="width: 100%" value="Log In">
+</form>
+{% endblock %}

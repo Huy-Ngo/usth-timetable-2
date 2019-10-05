@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+		{% block title %} USTH Timetable {% endblock %}
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="register waves-effect waves-light btn indigo accent-3" style="width: 100%">
+			<a class="white-text" href="{{ url_for('student_auth.r_register') }}"> Register </a>
+		</div>
+		<div class="login waves-effect waves-light btn indigo accent-3" style="width: 100%">
+			<a class="white-text" href="{{ url_for('student_auth.r_login') }}"> Login</a>
+		</div>
+		<div class="timetable waves-effect waves-light btn indigo accent-3" style="width: 100%">
+			<a class="white-text" href="{{ url_for('timetable.r_calendar_view_now', calendar_id='b1') }}">
+				View the timetable without login
+			</a>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+	<h1>
+		{% block title %} Register {% endblock %}
+	</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" class="container">
+	<label for="username">Username</label>
+	<input name="username" id="username" required>
+	<label for="password"> Password </label>
+	<input type="password" name="password" id="password" required>
+	<label for="password"> Timetable name </label>
+	<select name="timetable_id" style="display: inline !important;" required>
+			<option value="b0"> First year (4-year program) </option>
+			<option value="b1"> First year (3-year program) </option>
+			<option value="ae1"> AE year 1 </option>
+			<option value="ae2"> AE Year 2 </option>
+			<option value="weo2"> WEO Year 2 </option>
+			<option value="pmab2"> PMAB Year 2 </option>
+			<option value="amsn2"> AMSN Year 2 </option>
+			<option value="ict2"> ICT Year 2 </option>
+			<option value="cs2"> Cyber Security Year 2 </option>
+			<option value="sa2"> Space Year 2 </option>
+			<option value="en2"> Energy Year 2 </option>
+			<option value="mst2"> MST Year 2 </option>
+			<option value="fst2"> FST Year 2 </option>
+			<option value="weo3"> WEO Year 3 </option>
+			<option value="pmab3"> PMAB Year 3 </option>
+			<option value="amsn3"> AMSN Year 3 </option>
+			<option value="ict3"> ICT Year 3 </option>
+			<option value="sa3"> Space Year 3 </option>
+			<option value="en3"> Energy Year 3 </option>
+			<option value="mst3"> MST Year 3 </option>
+			<option value="fst3"> FST Year 3 </option>>
+		</select>
+	<input class="waves-effect waves-light btn indigo accent-3" style="width: 100%" type="submit" value="Register">
+</form>
+{% endblock %}

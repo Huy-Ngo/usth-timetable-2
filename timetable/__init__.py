@@ -1,5 +1,8 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
+
+from . import request_handler as req
+from http import HTTPStatus
 
 
 def create_app(test_config=None):
@@ -21,20 +24,61 @@ def create_app(test_config=None):
 	from . import db
 	db.init_app(app)
 
-	@app.route('/')
-	def index():
-		return jsonify({})
+	# @app.route('/')
+	# def index():
+	# 	return jsonify({})
 
 	from . import updater
 
-	# Get the timetable
-	@app.route('/<string:timetable_id>', methods=['GET'])
-	def r_timetable(timetable_id):
-		timetable = updater.get_event(timetable_id)
-		return jsonify(timetable)
+	# GET routes
+	# @app.route('/<timetable_id>/<view>/<int:year>/<int:month>/<int:day>', methods=['GET'])
+	# def r_timetable(timetable_id, view, year, month, day):
+	# 	timetable, status_code = updater.get_event(timetable_id, view, year, month, day)
+	# 	return jsonify({
+	# 		'response': timetable,
+	# 		'status_code': status_code
+	# 	})
+
+	@app.route('/create', methods=['POST'])
+	def create_timetable():
+		if not request.json \
+				or 'name' not in request.json \
+				or 'calendar_id' not in request.json \
+				or 'calendar_name' not in request.json:
+			abort(HTTPStatus.BAD_REQUEST)
+		request_body = {
+			'name': request.json['name'],
+			'calendar_id': request.json['calendar_id'],
+			'timetable_code': request.json['timetable_code']
+		}
+		response = db.create('timetable', request_body)
+		return jsonify(response)
+
+	@app.route('/<timetable_name>/edit', methods=['POST'])
+	def edit_timetable(timetable_name):
+		if not request.json:
+			abort(400)
+		response = db.get({
+			'table_name': 'timetable',
+			'name': timetable_name
+		})
+		if response['code'] != HTTPStatus.OK:
+			abort(response['code'])
+		timetable_id = response['response']['id']
+		request_body = {
+			'calendar_id': request.json['calendar_id'],
+			'timetable_code': request.json['timetable_code']
+		}
+		response = db.update('timetable', timetable_id, request_body)
+		return jsonify(response)
 
 	# Log in?
-	from . import user_auth
-	app.register_blueprint(user_auth.bp)
+	from . import student_auth
+	app.register_blueprint(student_auth.bp)
+	# The requests should be reorganized to align with standard
+
+	from . import timetable
+	app.register_blueprint(timetable.bp)
+	app.add_url_rule('/', endpoint='index')
 
 	return app

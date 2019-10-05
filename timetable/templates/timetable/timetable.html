@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{ view }}
+{% endblock %}
+
+{% block content %}
+	{% if view == 'agenda' %}
+		<div class="agenda">
+			Sorry. This is not implemented yet.
+		</div>
+	{% elif view == 'day' %}
+		<div class="day">
+			{% for event in events %}
+				<div class="summary">
+					{{ event['summary'] }}
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}

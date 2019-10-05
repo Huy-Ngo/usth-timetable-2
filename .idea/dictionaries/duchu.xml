@@ -2,6 +2,8 @@
   <dictionary name="duchu">
     <words>
       <w>creds</w>
+      <w>mysqlconnector</w>
+      <w>tablename</w>
       <w>usth</w>
     </words>
   </dictionary>

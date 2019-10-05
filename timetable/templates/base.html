@@ -1,0 +1,52 @@
+<!doctype html>
+<head>
+	<title>
+		{% block title %} {% endblock %} - USTH Timetable
+	</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='materialize.min.css') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+	<link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+</head>
+<body style="display: flex;
+	min-height: 100vh;
+	flex-direction: column;">
+	<nav>
+		<div class="nav-wrapper indigo darken-3 usth-nav">
+			<a href="{{ url_for('timetable.index') }}" class="brand-logo grey-text text-lighten-4"> USTH Timetable </a>
+			<ul class="right">
+				{% if g.student %}
+					<li>
+						<span> {{ g.student['name'] }} </span>
+					</li>
+					<li>
+						<a href="{{ url_for('student_auth.r_logout') }}" class="grey-text text-lighten-4"> Log Out </a>
+					</li>
+				{% else %}
+					<li>
+						<a href="{{ url_for('student_auth.r_register') }}" class="grey-text text-lighten-4"> Register </a>
+					</li>
+					<li>
+						<a href="{{ url_for('student_auth.r_login') }}" class="grey-text text-lighten-4"> Log In </a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
+	<main style="flex: 1 0 auto;">
+		<section class="content">
+			{% for message in get_flashed_messages() %}
+				<div class="flash">{{ message }}</div>
+			{% endfor %}
+			{% block content %}{% endblock %}
+		</section>
+	</main>
+
+	<footer class="page-footer indigo darken-3">
+		<div class="footer-copyright">
+			USTH Timetable © 2019 Ngo Ngoc Duc Huy
+		</div>
+	</footer>
+</body>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+	<h1>
+		{% block title %} {{ user['username'] }} - Profile {% endblock %}
+	</h1>
+{% endblock %}
+
+{% block content %}
+<h1>
+	<a href="#"> {{ user['username'] }} </a>
+</h1>
+<div>
+	Timetable: <span> {{ timetable }} </span>
+</div>
+
+{% endblock %}

@@ -8,6 +8,7 @@ instance/
 credentials.json
 token.pickle
 database_auth.json
+credentials-real-app.json
 
 .pytest_cache/
 .coverage
